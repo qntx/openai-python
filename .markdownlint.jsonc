@@ -1,0 +1,27 @@
+// Project-wide markdownlint configuration.
+// Docs: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+{
+  "default": true,
+
+  // Line length: disabled. CHANGELOG entries, badge URLs and inline code
+  // references frequently exceed 80 columns; soft-wrap is handled by the
+  // renderer, not by hard line breaks in source.
+  "MD013": false,
+
+  // Duplicate headings: permitted across sibling scopes. Keep a Changelog
+  // mandates repeated `### Added` / `### Changed` / `### Removed` under each
+  // version, but we still flag accidental duplicates within the same scope.
+  "MD024": { "siblings_only": true },
+
+  // Inline HTML: permitted. README uses <p align="center">, <img>, <a> and
+  // similar elements for badges, centered headers and tables.
+  "MD033": false,
+
+  // Emphasis used as heading: permitted. Lightweight **bold** section labels
+  // are common in changelogs and migration blocks.
+  "MD036": false,
+
+  // First line must be a top-level heading: disabled. README typically opens
+  // with badges or centered logo blocks before the `# Title` heading.
+  "MD041": false
+}
