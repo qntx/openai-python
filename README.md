@@ -9,7 +9,7 @@
 [![PyPI](https://img.shields.io/pypi/v/x402-openai)](https://pypi.org/project/x402-openai/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue)](https://python.org)
 [![CI](https://github.com/qntx/x402-openai-python/actions/workflows/python.yml/badge.svg)](https://github.com/qntx/x402-openai-python/actions)
-[![License](https://img.shields.io/badge/license-MIT%20%7C%20Apache--2.0-green)](LICENSE-MIT)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 </div>
 
