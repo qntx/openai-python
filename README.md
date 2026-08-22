@@ -118,7 +118,7 @@ Drop-in replacement for `openai.OpenAI` / `openai.AsyncOpenAI`. Provide **exactl
 | `x402_client` | `x402HTTPClient*` | Pre-configured x402 client (bypasses `policies`) |
 
 All standard OpenAI kwargs (`base_url`, `timeout`, `max_retries`, …) are forwarded.
-Default `base_url`: `https://llm.qntx.fun/v1`
+Default `base_url`: `https://llm.qntx.org/v1`
 
 ### Wallet Adapters
 
@@ -155,9 +155,9 @@ This project is licensed under the [MIT License](LICENSE).
 
 <div align="center">
 
-A **[QuantX](https://qntx.fun)** open-source project.
+A **[QuantX](https://qntx.org)** open-source project.
 
-<a href="https://qntx.fun"><img alt="QuantX" width="369" src="https://raw.githubusercontent.com/qntx/.github/main/profile/qntx.svg" /></a>
+<a href="https://qntx.org"><img alt="QuantX" width="369" src="https://raw.githubusercontent.com/qntx/.github/main/profile/qntx.svg" /></a>
 
 Code is law. We write both.
 
