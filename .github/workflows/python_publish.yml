@@ -5,10 +5,15 @@ on:
     tags:
       - "v*.*.*"
 
+permissions:
+  contents: read
+
 jobs:
   call-publish:
-    uses: qntx/workflows/.github/workflows/python-publish.yml@main
+    uses: qntx/workflows/.github/workflows/publish-pypi.yml@v2.0.0
+    permissions:
+      contents: read
     with:
       python-version: '3.13'
     secrets:
-      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN || secrets.PYPI_API_TOKEN }}
