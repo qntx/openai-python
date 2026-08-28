@@ -6,8 +6,13 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+
 jobs:
   call-ci:
-    uses: qntx/workflows/.github/workflows/python.yml@main
+    uses: qntx/workflows/.github/workflows/ci-python.yml@v2
+    permissions:
+      contents: read
     with:
       python-version: '3.13'
