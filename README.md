@@ -67,17 +67,19 @@ async for chunk in stream:
 ```python
 from x402_openai.wallets import EvmWallet, SvmWallet
 
-client = X402OpenAI(wallets=[
-    EvmWallet(private_key="0x…"),
-    SvmWallet(private_key="base58…"),
-])
+client = X402OpenAI(
+    wallets=[
+        EvmWallet(private_key="0x…"),
+        SvmWallet(private_key="base58…"),
+    ]
+)
 ```
 
 ### BIP-39 Mnemonic (EVM)
 
 ```python
 wallet = EvmWallet(mnemonic="word1 word2 … word12")
-wallet = EvmWallet(mnemonic="…", account_index=2)                  # m/44'/60'/0'/0/2
+wallet = EvmWallet(mnemonic="…", account_index=2)  # m/44'/60'/0'/0/2
 wallet = EvmWallet(mnemonic="…", derivation_path="m/44'/60'/2'/0/0")  # custom path
 ```
 
@@ -98,8 +100,8 @@ client = X402OpenAI(
     ],
     policies=[
         prefer_network("eip155:8453"),  # Prefer Base mainnet
-        prefer_scheme("exact"),         # Prefer exact payment scheme
-        max_amount(1_000_000),          # Cap at 1 USDC (6 decimals)
+        prefer_scheme("exact"),  # Prefer exact payment scheme
+        max_amount(1_000_000),  # Cap at 1 USDC (6 decimals)
     ],
 )
 ```
