@@ -11,9 +11,9 @@ import openai
 import pytest
 from x402 import x402Client, x402ClientSync
 
-import qntx.openai as api
-from qntx.openai import AsyncX402OpenAI, SvmConfig, TvmConfig, X402OpenAI
-from qntx.openai._payments import BuiltClient
+import x402_openai as api
+from x402_openai import AsyncX402OpenAI, SvmConfig, TvmConfig, X402OpenAI
+from x402_openai._payments import BuiltClient
 
 EVM_KEY = "0xac0974dac38f24671676c33098b7abf185c4d7b8d04844c06a56a24126c6dcbd"
 TVM_KEY = "11" * 32
@@ -45,7 +45,7 @@ def test_throws_on_empty_evm_string() -> None:
 
 
 def test_throws_on_empty_evm_config() -> None:
-    from qntx.openai import EvmConfig
+    from x402_openai import EvmConfig
 
     with pytest.raises(ValueError, match="non-empty"):
         X402OpenAI(evm=EvmConfig(private_key=""))
@@ -57,7 +57,7 @@ def test_throws_on_empty_svm_string() -> None:
 
 
 def test_throws_on_empty_svm_config() -> None:
-    from qntx.openai import SvmConfig
+    from x402_openai import SvmConfig
 
     with pytest.raises(ValueError, match="'svm' private key must be a non-empty string"):
         X402OpenAI(svm=SvmConfig(private_key=""))
@@ -209,7 +209,7 @@ def test_close_concurrent_with_first_request_disposes_and_raises() -> None:
         except BaseException as e:
             errors.append(e)
 
-    with patch("qntx.openai._client.build_x402_client", fake_build):
+    with patch("x402_openai._client.build_x402_client", fake_build):
         thread = threading.Thread(target=run_ensure)
         thread.start()
         assert built_started.wait(timeout=2)
@@ -231,7 +231,7 @@ async def test_async_two_concurrent_first_requests_build_once() -> None:
         return BuiltClient(http=object(), dispose=lambda: None)
 
     client = AsyncX402OpenAI(evm=EVM_KEY)
-    with patch("qntx.openai._client.build_x402_client", fake_build):
+    with patch("x402_openai._client.build_x402_client", fake_build):
         h1, h2 = await asyncio.gather(
             client._lifecycle._ensure_http(),
             client._lifecycle._ensure_http(),
@@ -340,7 +340,7 @@ async def test_async_close_during_first_request_observes_closed() -> None:
 
     await lifecycle._lock.acquire()
     try:
-        with patch("qntx.openai._client.build_x402_client", fake_build):
+        with patch("x402_openai._client.build_x402_client", fake_build):
             ensure_task = asyncio.create_task(lifecycle._ensure_http())
             await asyncio.sleep(0)
             close_task = asyncio.create_task(client.close())
@@ -371,7 +371,7 @@ async def test_async_close_during_build_disposes_just_built_client() -> None:
         return BuiltClient(http=object(), dispose=dispose)
 
     with (
-        patch("qntx.openai._client.build_x402_client", fake_build),
+        patch("x402_openai._client.build_x402_client", fake_build),
         pytest.raises(RuntimeError, match="X402OpenAI is closed"),
     ):
         await lifecycle._ensure_http()
@@ -387,9 +387,9 @@ def test_inner_transport_uses_openai_limits_and_env_proxy(monkeypatch: pytest.Mo
         captured.append(kwargs)
         return real(*args, **kwargs)
 
-    monkeypatch.setattr("qntx.openai._client.httpx2.HTTPTransport", capturing_transport)
+    monkeypatch.setattr("x402_openai._client.httpx2.HTTPTransport", capturing_transport)
     monkeypatch.setattr(
-        "qntx.openai._client.get_environment_proxies",
+        "x402_openai._client.get_environment_proxies",
         lambda: {"https://": "http://proxy.example:8080"},
     )
     X402OpenAI(evm="0x1")

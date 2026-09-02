@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
+from x402_openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 
 
 def test_missing_evm_extra_import_error(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -14,13 +14,13 @@ def test_missing_evm_extra_import_error(monkeypatch: pytest.MonkeyPatch) -> None
         if name.startswith("eth_account.") or name.startswith("x402.mechanisms.evm."):
             monkeypatch.setitem(sys.modules, name, None)
 
-    from qntx.openai._chains._evm import register_evm
+    from x402_openai._chains._evm import register_evm
 
     class _Client:
         def register(self, network: str, scheme: object) -> None:
             return None
 
-    with pytest.raises(ImportError, match=r"qntx-openai\[evm\]"):
+    with pytest.raises(ImportError, match=r"x402-openai\[evm\]"):
         register_evm(_Client(), EvmConfig(private_key="0x1"))  # type: ignore[arg-type]
 
 
@@ -33,13 +33,13 @@ def test_missing_svm_extra_import_error(monkeypatch: pytest.MonkeyPatch) -> None
         if name == "x402.mechanisms.svm" or name.startswith("x402.mechanisms.svm."):
             monkeypatch.setitem(sys.modules, name, None)
 
-    from qntx.openai._chains._svm import register_svm
+    from x402_openai._chains._svm import register_svm
 
     class _Client:
         def register(self, network: str, scheme: object) -> None:
             return None
 
-    with pytest.raises(ImportError, match=r"qntx-openai\[svm\]"):
+    with pytest.raises(ImportError, match=r"x402-openai\[svm\]"):
         register_svm(_Client(), SvmConfig(private_key="base58"))  # type: ignore[arg-type]
 
 
@@ -55,11 +55,11 @@ def test_missing_tvm_extra_import_error(monkeypatch: pytest.MonkeyPatch) -> None
         ):
             monkeypatch.setitem(sys.modules, name, None)
 
-    from qntx.openai._chains._tvm import register_tvm
+    from x402_openai._chains._tvm import register_tvm
 
     class _Client:
         def register(self, network: str, scheme: object) -> None:
             return None
 
-    with pytest.raises(ImportError, match=r"qntx-openai\[tvm\]"):
+    with pytest.raises(ImportError, match=r"x402-openai\[tvm\]"):
         register_tvm(_Client(), TvmConfig(private_key="11" * 32))  # type: ignore[arg-type]

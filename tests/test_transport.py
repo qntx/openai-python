@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 import httpx2
 import pytest
 
-from qntx.openai._transport import (
+from x402_openai._transport import (
     RECOVERY_KEY,
     RETRY_KEY,
     PaymentError,

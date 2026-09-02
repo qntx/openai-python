@@ -6,7 +6,7 @@ Usage: SOLANA_PRIVATE_KEY="base58..." python examples/streaming_svm.py
 import asyncio
 import os
 
-from qntx.openai import AsyncX402OpenAI
+from x402_openai import AsyncX402OpenAI
 
 
 async def main() -> None:

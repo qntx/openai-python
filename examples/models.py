@@ -5,7 +5,7 @@ Usage: EVM_PRIVATE_KEY="0x..." python examples/models.py
 
 import os
 
-from qntx.openai import X402OpenAI
+from x402_openai import X402OpenAI
 
 client = X402OpenAI(evm=os.environ["EVM_PRIVATE_KEY"])
 

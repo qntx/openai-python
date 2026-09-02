@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from x402.http import x402HTTPClient, x402HTTPClientSync
 
-logger = logging.getLogger("qntx.openai")
+logger = logging.getLogger("x402_openai")
 
 RETRY_KEY = "_x402_is_retry"
 RECOVERY_KEY = "_x402_is_recovery"

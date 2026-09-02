@@ -8,7 +8,7 @@ Usage: TVM_PRIVATE_KEY="hex-or-base64..." python examples/chat_tvm.py
 
 import os
 
-from qntx.openai import X402OpenAI
+from x402_openai import X402OpenAI
 
 client = X402OpenAI(tvm=os.environ["TVM_PRIVATE_KEY"])
 try:

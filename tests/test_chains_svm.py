@@ -9,11 +9,11 @@ pytest.importorskip("solana.rpc.api")
 from x402.mechanisms.svm.exact import ExactSvmScheme
 from x402.schemas import PaymentRequired, PaymentRequirements, ResourceInfo
 
-from qntx.openai import prefer_scheme
-from qntx.openai._chains._register import register_chains
-from qntx.openai._chains._svm import register_svm
-from qntx.openai._chains._types import SvmConfig
-from qntx.openai._payments import PaymentSourceOptions, build_x402_client
+from x402_openai import prefer_scheme
+from x402_openai._chains._register import register_chains
+from x402_openai._chains._svm import register_svm
+from x402_openai._chains._types import SvmConfig
+from x402_openai._payments import PaymentSourceOptions, build_x402_client
 
 # 64-byte Ed25519 secret (seed + pubkey), base58. Seed is 31 zero bytes + 0x01.
 SVM_KEY = "1111111111111111111111111111111PPm2a2NNZH2EFJ5UkEjkH9Fcxn8cvjTmZDKQQisyLDmA"

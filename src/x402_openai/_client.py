@@ -7,22 +7,22 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Literal, Self
 
 import httpx2
-from httpx2._utils import get_environment_proxies
-
 import openai
+from httpx2._utils import get_environment_proxies
 from openai import DefaultAsyncHttpx2Client, DefaultHttpx2Client
-from qntx.openai._payments import (
+
+from x402_openai._payments import (
     BuiltClient,
     PaymentSourceOptions,
     assert_payment_options,
     build_x402_client,
 )
-from qntx.openai._transport import X402Httpx2AsyncTransport, X402Httpx2SyncTransport
+from x402_openai._transport import X402Httpx2AsyncTransport, X402Httpx2SyncTransport
 
 if TYPE_CHECKING:
     from x402 import SpendControls, x402Client, x402ClientSync
 
-    from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
+    from x402_openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 
 DEFAULT_BASE_URL = "https://llm.qntx.org/v1"
 _REMOVED = ("wallet", "wallets", "mnemonic", "max_amount", "http_client")

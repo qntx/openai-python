@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Protocol
 if TYPE_CHECKING:
     from x402 import x402Client, x402ClientSync
 
-    from qntx.openai._chains._types import TvmConfig
+    from x402_openai._chains._types import TvmConfig
 
 
 class _TvmScheme(Protocol):
@@ -24,7 +24,7 @@ def register_tvm(client: x402Client | x402ClientSync, config: TvmConfig) -> _Tvm
         from x402.mechanisms.tvm.exact import ExactTvmScheme
     except ImportError as e:
         raise ImportError(
-            "TVM key provided but x402[tvm] is not installed. pip install 'qntx-openai[tvm]'"
+            "TVM key provided but x402[tvm] is not installed. pip install 'x402-openai[tvm]'"
         ) from e
 
     network = config.network or TVM_MAINNET

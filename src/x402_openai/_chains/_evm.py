@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from x402 import x402Client, x402ClientSync
 
-    from qntx.openai._chains._types import EvmConfig
+    from x402_openai._chains._types import EvmConfig
 
 
 def register_evm(client: x402Client | x402ClientSync, config: EvmConfig) -> None:
@@ -17,7 +17,7 @@ def register_evm(client: x402Client | x402ClientSync, config: EvmConfig) -> None
         from x402.mechanisms.evm.upto import UptoEvmScheme
     except ImportError as e:
         raise ImportError(
-            "EVM key provided but x402[evm] is not installed. pip install 'qntx-openai[evm]'"
+            "EVM key provided but x402[evm] is not installed. pip install 'x402-openai[evm]'"
         ) from e
 
     account = Account.from_key(config.private_key)

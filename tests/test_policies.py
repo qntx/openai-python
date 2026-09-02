@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, NamedTuple
 
-from qntx.openai import prefer_network, prefer_scheme
+from x402_openai import prefer_network, prefer_scheme
 
 
 class _Req(NamedTuple):

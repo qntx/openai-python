@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Any, Literal, NamedTuple, cast
 from x402 import SpendControls, x402Client, x402ClientSync
 from x402.http import x402HTTPClient, x402HTTPClientSync
 
-from qntx.openai._chains._register import register_chains
+from x402_openai._chains._register import register_chains
 
 if TYPE_CHECKING:
-    from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
+    from x402_openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 
 Policy = Callable[[int, list[Any]], list[Any]]
 Selector = Callable[[int, list[Any]], Any]

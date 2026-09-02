@@ -6,7 +6,7 @@ Usage: EVM_PRIVATE_KEY="0x..." python examples/streaming_evm.py
 import asyncio
 import os
 
-from qntx.openai import AsyncX402OpenAI
+from x402_openai import AsyncX402OpenAI
 
 
 async def main() -> None:

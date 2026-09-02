@@ -11,7 +11,7 @@ Usage:
 
 import os
 
-from qntx.openai import X402OpenAI, prefer_network, prefer_scheme
+from x402_openai import X402OpenAI, prefer_network, prefer_scheme
 
 client = X402OpenAI(
     evm=os.environ["EVM_PRIVATE_KEY"],

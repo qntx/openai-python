@@ -21,7 +21,7 @@ format:
 
 # Run the mypy type checker.
 typecheck:
-    uv run mypy src/qntx/openai
+    uv run mypy src/x402_openai
 
 # Run pytest.
 test:

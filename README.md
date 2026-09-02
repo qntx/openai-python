@@ -2,11 +2,11 @@
 
 <div align="center">
 
-# qntx-openai
+# x402-openai
 
 **Drop-in OpenAI Python client with transparent [x402](https://www.x402.org/) payment support.**
 
-[![PyPI](https://img.shields.io/pypi/v/qntx-openai)](https://pypi.org/project/qntx-openai/)
+[![PyPI](https://img.shields.io/pypi/v/x402-openai)](https://pypi.org/project/x402-openai/)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue)](https://python.org)
 [![CI](https://github.com/qntx/openai-python/actions/workflows/python.yml/badge.svg)](https://github.com/qntx/openai-python/actions)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -23,18 +23,16 @@ Supplying `evm` registers both **`exact` and `upto`**. `svm` and `tvm` register 
 ## Installation
 
 ```bash
-pip install 'qntx-openai[evm]'          # EVM (Ethereum / Base / …)
-pip install 'qntx-openai[svm]'          # Solana
-pip install 'qntx-openai[tvm]'          # TVM (TON)
-pip install 'qntx-openai[all]'          # all chains
+pip install 'x402-openai[evm]'          # EVM (Ethereum / Base / …)
+pip install 'x402-openai[svm]'          # Solana
+pip install 'x402-openai[tvm]'          # TVM (TON)
+pip install 'x402-openai[all]'          # all chains
 ```
-
-The PyPI name `x402-openai` is abandoned. Install `qntx-openai`.
 
 ## Quick Start
 
 ```python
-from qntx.openai import X402OpenAI
+from x402_openai import X402OpenAI
 
 client = X402OpenAI(evm="0x…")
 
@@ -52,7 +50,7 @@ Pass `svm="base58…"` instead of `evm` to pay on Solana — the rest of the API
 ### Streaming
 
 ```python
-from qntx.openai import AsyncX402OpenAI
+from x402_openai import AsyncX402OpenAI
 
 client = AsyncX402OpenAI(evm="0x…")
 
@@ -124,7 +122,7 @@ client = X402OpenAI(
 - **SVM `exact`:** the 402 must include `extra.feePayer`. There is no SVM `upto` scheme in Python `x402`.
 
 ```python
-from qntx.openai import X402OpenAI, prefer_scheme
+from x402_openai import X402OpenAI, prefer_scheme
 
 client = X402OpenAI(
     evm="0x…",
@@ -139,7 +137,7 @@ client = X402OpenAI(
 Use policies to prefer a chain or scheme when multiple options remain after spend controls. Policies do not cap spend.
 
 ```python
-from qntx.openai import X402OpenAI, prefer_network, prefer_scheme
+from x402_openai import X402OpenAI, prefer_network, prefer_scheme
 
 client = X402OpenAI(
     evm="0x…",
@@ -194,9 +192,9 @@ All standard OpenAI options (`base_url`, `timeout`, `max_retries`, …) are forw
 
 | Option | Chain | Install extra |
 | :----- | :---- | :------------ |
-| `evm` | EVM | `qntx-openai[evm]` |
-| `svm` | Solana | `qntx-openai[svm]` |
-| `tvm` | TVM | `qntx-openai[tvm]` |
+| `evm` | EVM | `x402-openai[evm]` |
+| `svm` | Solana | `x402-openai[svm]` |
+| `tvm` | TVM | `x402-openai[tvm]` |
 
 ## Examples
 
