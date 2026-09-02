@@ -63,9 +63,8 @@ stream = await client.chat.completions.create(
 )
 
 async for chunk in stream:
-    content = chunk.choices[0].delta.content
-    if content:
-        print(content, end="")
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="")
 ```
 
 ### Multi-chain
@@ -121,9 +120,8 @@ client = X402OpenAI(
 
 `evm` registers `ExactEvmScheme` and `UptoEvmScheme` on `eip155:*`. `svm` registers `ExactSvmScheme` on `solana:*` (**no Python `upto`**). `tvm` registers `ExactTvmScheme` on the configured CAIP-2. No extra flag; the gateway is not probed.
 
-- **EVM `upto`:** Permit2 (`permitWitnessTransferFrom`). The 402 must include `extra.facilitatorAddress`. Pass `{ rpc_url }` on `evm` to enable official EIP-2612 / ERC-20 approval sponsoring.
+- **EVM `upto`:** Permit2 (`permitWitnessTransferFrom`). The 402 must include `extra.facilitatorAddress`. Pass `{ rpc_url }` on `evm` to enable official EIP-2612 / ERC-20 approval sponsoring. The 402 `amount` is the **authorized maximum**; the client signs that max (the server may charge `<=` max at settle). If the ceiling exceeds spend controls, payment creation throws.
 - **SVM `exact`:** the 402 must include `extra.feePayer`. There is no SVM `upto` scheme in Python `x402`.
-- The 402 `amount` is the **authorized maximum**. The client signs that max; it does not sign a smaller amount. The server chooses the actual charge (`<=` max) at settle. If the ceiling exceeds spend controls, payment creation throws.
 
 ```python
 from qntx.openai import X402OpenAI, prefer_scheme
@@ -153,7 +151,7 @@ client = X402OpenAI(
 )
 ```
 
-If nothing matches, all remaining options pass through. On this client, `prefer_scheme("upto")` filters EVM requirements; SVM still pays `exact`.
+If nothing matches, all remaining options pass through. If any `upto` requirement remains, `prefer_scheme("upto")` keeps only those (EVM); otherwise the list passes through and SVM can pay `exact`.
 
 ### Closing
 
