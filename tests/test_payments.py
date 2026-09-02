@@ -209,6 +209,19 @@ def test_spend_controls_false_allows_2_usdc() -> None:
     assert payload.payload == {"stub": "exact"}
 
 
+def test_build_registers_policies() -> None:
+    from qntx.openai import prefer_scheme
+
+    policy = prefer_scheme("upto")
+    with patch("qntx.openai._payments.register_chains", _noop_register):
+        built = build_x402_client(
+            PaymentSourceOptions(evm=EVM_KEY, policies=[policy]),
+            sync=True,
+        )
+    core = _core(built)
+    assert policy in core._policies
+
+
 def test_selector_runs_after_spend_controls() -> None:
     with patch("qntx.openai._payments.register_chains", _noop_register):
         built = build_x402_client(

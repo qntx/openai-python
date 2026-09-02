@@ -1,4 +1,4 @@
-"""Chain registration. PR 1: EVM only."""
+"""Chain registration (EVM)."""
 
 from __future__ import annotations
 

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import threading
+from typing import Any
 from unittest.mock import patch
 
+import httpx2
 import openai
 import pytest
 from x402 import x402Client, x402ClientSync
@@ -213,3 +215,109 @@ def test_removed_names_never_reach_openai() -> None:
         X402OpenAI(svm="x")
     with pytest.raises(TypeError, match="tvm="):
         X402OpenAI(tvm="x")
+
+
+def test_copy_reuses_lifecycle_and_http_client() -> None:
+    client = X402OpenAI(evm="0x1")
+    copied = client.copy()
+    assert copied is not client
+    assert copied._lifecycle is client._lifecycle
+    assert copied._client is client._client
+
+
+def test_with_options_timeout_reuses_lifecycle() -> None:
+    client = X402OpenAI(evm="0x1")
+    copied = client.with_options(timeout=10)
+    assert copied.timeout == 10
+    assert copied._lifecycle is client._lifecycle
+
+
+def test_copy_rejects_caller_http_client() -> None:
+    client = X402OpenAI(evm="0x1")
+    with pytest.raises(TypeError, match="http_client"):
+        client.copy(http_client=httpx2.Client())
+
+
+def test_constructor_still_rejects_http_client() -> None:
+    with pytest.raises(TypeError, match="http_client"):
+        X402OpenAI(evm="0x1", http_client=httpx2.Client())
+
+
+def test_async_copy_reuses_lifecycle() -> None:
+    client = AsyncX402OpenAI(evm="0x1")
+    copied = client.copy()
+    assert copied._lifecycle is client._lifecycle
+    assert copied.with_options(timeout=5)._lifecycle is client._lifecycle
+
+
+async def test_async_close_during_first_request_observes_closed() -> None:
+    dispose_calls = 0
+
+    def dispose() -> None:
+        nonlocal dispose_calls
+        dispose_calls += 1
+
+    client = AsyncX402OpenAI(evm=EVM_KEY)
+    lifecycle = client._lifecycle
+
+    def fake_build(options: object, *, sync: bool) -> BuiltClient:
+        return BuiltClient(http=object(), dispose=dispose)
+
+    await lifecycle._lock.acquire()
+    try:
+        with patch("qntx.openai._client.build_x402_client", fake_build):
+            ensure_task = asyncio.create_task(lifecycle._ensure_http())
+            await asyncio.sleep(0)
+            close_task = asyncio.create_task(client.close())
+            await asyncio.sleep(0)
+            assert lifecycle._closed is True
+            lifecycle._lock.release()
+            results = await asyncio.gather(ensure_task, close_task, return_exceptions=True)
+    except BaseException:
+        if lifecycle._lock.locked():
+            lifecycle._lock.release()
+        raise
+
+    assert any(isinstance(r, RuntimeError) and "X402OpenAI is closed" in str(r) for r in results)
+
+
+async def test_async_close_during_build_disposes_just_built_client() -> None:
+    dispose_calls = 0
+
+    def dispose() -> None:
+        nonlocal dispose_calls
+        dispose_calls += 1
+
+    client = AsyncX402OpenAI(evm=EVM_KEY)
+    lifecycle = client._lifecycle
+
+    def fake_build(options: object, *, sync: bool) -> BuiltClient:
+        lifecycle._closed = True
+        return BuiltClient(http=object(), dispose=dispose)
+
+    with (
+        patch("qntx.openai._client.build_x402_client", fake_build),
+        pytest.raises(RuntimeError, match="X402OpenAI is closed"),
+    ):
+        await lifecycle._ensure_http()
+    assert dispose_calls == 1
+    assert lifecycle._built is None
+
+
+def test_inner_transport_uses_openai_limits_and_env_proxy(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: list[dict[str, Any]] = []
+    real = httpx2.HTTPTransport
+
+    def capturing_transport(*args: Any, **kwargs: Any) -> httpx2.HTTPTransport:
+        captured.append(kwargs)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr("qntx.openai._client.httpx2.HTTPTransport", capturing_transport)
+    monkeypatch.setattr(
+        "qntx.openai._client.get_environment_proxies",
+        lambda: {"https://": "http://proxy.example:8080"},
+    )
+    X402OpenAI(evm="0x1")
+    assert captured
+    assert all(k.get("limits") == openai.DEFAULT_CONNECTION_LIMITS for k in captured)
+    assert any(k.get("proxy") == "http://proxy.example:8080" for k in captured)

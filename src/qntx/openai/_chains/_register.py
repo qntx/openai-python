@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class ChainHandles:
     def dispose(self) -> None:
-        # SVM/EVM RPC handles are owned upstream; they are not closed here.
+        # EVM RPC handles have no close hook upstream.
         return None
 
 

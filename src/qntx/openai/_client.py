@@ -1,12 +1,13 @@
-"""Drop-in OpenAI clients with transparent x402 payment (PR 1: evm only)."""
+"""Drop-in OpenAI clients with transparent x402 payment."""
 
 from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any, Literal, Self
 
 import httpx2
+from httpx2._utils import get_environment_proxies
 
 import openai
 from openai import DefaultAsyncHttpx2Client, DefaultHttpx2Client
@@ -23,13 +24,40 @@ if TYPE_CHECKING:
 
     from qntx.openai._chains._types import EvmConfig
 
-DEFAULT_BASE_URL = "https://llm.qntx.org/v1"  # match shipped TS; not llm.qntx.fun
+DEFAULT_BASE_URL = "https://llm.qntx.org/v1"
 _REMOVED = ("wallet", "wallets", "mnemonic", "max_amount", "http_client")
-# PR 1: reject names that land later so they never become OpenAI kwargs.
 _NOT_YET = {"svm": "svm= lands in 1.0 PR 2", "tvm": "tvm= lands in 1.0 PR 3"}
+_HTTP_CLIENT_REMOVED = (
+    "'http_client' was removed. Pass per-chain private keys (evm=) and spend_controls=."
+)
 
 Policy = Callable[[int, list[Any]], list[Any]]
 Selector = Callable[[int, list[Any]], Any]
+
+
+def _inner_kwargs(proxy: str | None = None) -> dict[str, Any]:
+    kwargs: dict[str, Any] = {"limits": openai.DEFAULT_CONNECTION_LIMITS}
+    if proxy is not None:
+        kwargs["proxy"] = proxy
+    return kwargs
+
+
+def _env_proxy_mounts(ensure_http: Callable[..., Any], *, async_inner: bool) -> dict[str, Any]:
+    mounts: dict[str, Any] = {}
+    for key, url in get_environment_proxies().items():
+        if url is None:
+            mounts[key] = None
+            continue
+        inner_kw = _inner_kwargs(url)
+        if async_inner:
+            mounts[key] = X402Httpx2AsyncTransport(
+                ensure_http, inner=httpx2.AsyncHTTPTransport(**inner_kw)
+            )
+        else:
+            mounts[key] = X402Httpx2SyncTransport(
+                ensure_http, inner=httpx2.HTTPTransport(**inner_kw)
+            )
+    return mounts
 
 
 class _SyncLifecycle:
@@ -38,7 +66,11 @@ class _SyncLifecycle:
         self._closed = False
         self._built: BuiltClient | None = None
         self.http_client = DefaultHttpx2Client(
-            transport=X402Httpx2SyncTransport(self._ensure_http, inner=httpx2.HTTPTransport()),
+            transport=X402Httpx2SyncTransport(
+                self._ensure_http,
+                inner=httpx2.HTTPTransport(**_inner_kwargs()),
+            ),
+            mounts=_env_proxy_mounts(self._ensure_http, async_inner=False),
             timeout=openai.DEFAULT_TIMEOUT,
         )
 
@@ -68,8 +100,10 @@ class _AsyncLifecycle:
         self._lock = asyncio.Lock()
         self.http_client = DefaultAsyncHttpx2Client(
             transport=X402Httpx2AsyncTransport(
-                self._ensure_http, inner=httpx2.AsyncHTTPTransport()
+                self._ensure_http,
+                inner=httpx2.AsyncHTTPTransport(**_inner_kwargs()),
             ),
+            mounts=_env_proxy_mounts(self._ensure_http, async_inner=True),
             timeout=openai.DEFAULT_TIMEOUT,
         )
 
@@ -96,8 +130,8 @@ class _AsyncLifecycle:
             self._built = None
 
     async def aclose(self) -> None:
+        self._closed = True
         async with self._lock:
-            self._closed = True
             if self._built is not None:
                 self._built.dispose()
                 self._built = None
@@ -112,6 +146,15 @@ def _reject_removed_and_not_yet(kwargs: dict[str, Any]) -> None:
     for name, msg in _NOT_YET.items():
         if name in kwargs:
             raise TypeError(msg)
+
+
+def _copy_with_lifecycle(self: Any, kwargs: dict[str, Any]) -> dict[str, Any]:
+    if kwargs.get("http_client") is not None:
+        raise TypeError(_HTTP_CLIENT_REMOVED)
+    extra = dict(kwargs.get("_extra_kwargs") or {})
+    extra["_lifecycle"] = self._lifecycle
+    kwargs["_extra_kwargs"] = extra
+    return kwargs
 
 
 class X402OpenAI(openai.OpenAI):
@@ -133,6 +176,18 @@ class X402OpenAI(openai.OpenAI):
         api_key: str | None = "x402",
         **kwargs: Any,
     ) -> None:
+        lifecycle = kwargs.pop("_lifecycle", None)
+        if lifecycle is not None:
+            kwargs.pop("http_client", None)
+            _reject_removed_and_not_yet(kwargs)
+            super().__init__(
+                api_key=api_key,
+                base_url=base_url or DEFAULT_BASE_URL,
+                http_client=lifecycle.http_client,
+                **kwargs,
+            )
+            self._lifecycle = lifecycle
+            return
         _reject_removed_and_not_yet(kwargs)
         payment = PaymentSourceOptions(
             evm=evm,
@@ -150,6 +205,11 @@ class X402OpenAI(openai.OpenAI):
             **kwargs,
         )
         self._lifecycle = lifecycle
+
+    def copy(self, **kwargs: Any) -> Self:
+        return super().copy(**_copy_with_lifecycle(self, kwargs))
+
+    with_options = copy
 
     def close(self) -> None:
         self._lifecycle.close()
@@ -174,6 +234,18 @@ class AsyncX402OpenAI(openai.AsyncOpenAI):
         api_key: str | None = "x402",
         **kwargs: Any,
     ) -> None:
+        lifecycle = kwargs.pop("_lifecycle", None)
+        if lifecycle is not None:
+            kwargs.pop("http_client", None)
+            _reject_removed_and_not_yet(kwargs)
+            super().__init__(
+                api_key=api_key,
+                base_url=base_url or DEFAULT_BASE_URL,
+                http_client=lifecycle.http_client,
+                **kwargs,
+            )
+            self._lifecycle = lifecycle
+            return
         _reject_removed_and_not_yet(kwargs)
         payment = PaymentSourceOptions(
             evm=evm,
@@ -191,6 +263,11 @@ class AsyncX402OpenAI(openai.AsyncOpenAI):
             **kwargs,
         )
         self._lifecycle = lifecycle
+
+    def copy(self, **kwargs: Any) -> Self:
+        return super().copy(**_copy_with_lifecycle(self, kwargs))
+
+    with_options = copy
 
     async def close(self) -> None:
         await self._lifecycle.aclose()
