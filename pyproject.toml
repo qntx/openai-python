@@ -14,7 +14,7 @@ authors = [
 requires-python = ">=3.12"
 keywords = ["openai", "x402", "payment", "crypto", "usdc", "llm", "ai"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
@@ -57,9 +57,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/qntx/x402-openai-python"
-Repository = "https://github.com/qntx/x402-openai-python"
-Issues = "https://github.com/qntx/x402-openai-python/issues"
+Homepage = "https://github.com/qntx/openai-python"
+Repository = "https://github.com/qntx/openai-python"
+Issues = "https://github.com/qntx/openai-python/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/qntx"]

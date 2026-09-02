@@ -1,8 +1,8 @@
-"""EVM chat completion with payment policies.
+"""Chat completion with spend_controls and preference policies.
 
-Prefers Base mainnet, then the `upto` scheme.
+Caps each payment at $0.50 of a default asset, prefers Base, then `upto`.
 
-Usage: EVM_PRIVATE_KEY="0x..." python examples/chat_evm_policy.py
+Usage: EVM_PRIVATE_KEY="0x..." python examples/chat_policy.py
 """
 
 import os
@@ -11,10 +11,8 @@ from qntx.openai import X402OpenAI, prefer_network, prefer_scheme
 
 client = X402OpenAI(
     evm=os.environ["EVM_PRIVATE_KEY"],
-    policies=[
-        prefer_network("eip155:8453"),  # Prefer Base mainnet
-        prefer_scheme("upto"),
-    ],
+    spend_controls={"max_amount_per_payment": "$0.50"},
+    policies=[prefer_network("eip155:8453"), prefer_scheme("upto")],
 )
 
 response = client.chat.completions.create(
