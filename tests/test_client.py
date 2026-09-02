@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 import threading
 from typing import Any
 from unittest.mock import patch
@@ -11,10 +12,11 @@ import pytest
 from x402 import x402Client, x402ClientSync
 
 import qntx.openai as api
-from qntx.openai import AsyncX402OpenAI, X402OpenAI
+from qntx.openai import AsyncX402OpenAI, SvmConfig, TvmConfig, X402OpenAI
 from qntx.openai._payments import BuiltClient
 
 EVM_KEY = "0xac0974dac38f24671676c33098b7abf185c4d7b8d04844c06a56a24126c6dcbd"
+TVM_KEY = "11" * 32
 
 
 def test_defaults_base_url() -> None:
@@ -33,7 +35,7 @@ def test_is_openai_subclass() -> None:
 
 
 def test_throws_when_no_credentials() -> None:
-    with pytest.raises(ValueError, match=r"'evm', 'svm', or 'x402_client'"):
+    with pytest.raises(ValueError, match=r"'evm', 'svm', 'tvm', or 'x402_client'"):
         X402OpenAI()
 
 
@@ -87,9 +89,20 @@ def test_accepts_evm_and_svm() -> None:
     assert isinstance(client, X402OpenAI)
 
 
-def test_tvm_not_yet() -> None:
-    with pytest.raises(TypeError, match="tvm="):
-        X402OpenAI(evm="0x1", tvm="00")
+def test_accepts_tvm_without_evm() -> None:
+    client = X402OpenAI(tvm=TVM_KEY)
+    assert isinstance(client, X402OpenAI)
+    assert client._lifecycle._options.tvm == TVM_KEY
+
+
+def test_throws_on_empty_tvm_string() -> None:
+    with pytest.raises(ValueError, match="non-empty"):
+        X402OpenAI(tvm="")
+
+
+def test_throws_on_empty_tvm_config() -> None:
+    with pytest.raises(ValueError, match="non-empty"):
+        X402OpenAI(tvm=TvmConfig(private_key=""))
 
 
 def test_prebuilt_exclusive_with_evm() -> None:
@@ -100,6 +113,11 @@ def test_prebuilt_exclusive_with_evm() -> None:
 def test_prebuilt_exclusive_with_svm() -> None:
     with pytest.raises(ValueError, match="Cannot combine"):
         X402OpenAI(x402_client=x402ClientSync(), svm="base58")
+
+
+def test_prebuilt_exclusive_with_tvm() -> None:
+    with pytest.raises(ValueError, match="Cannot combine"):
+        X402OpenAI(x402_client=x402ClientSync(), tvm=TVM_KEY)
 
 
 def test_prebuilt_exclusive_with_policies() -> None:
@@ -141,6 +159,19 @@ def test_close_before_build_is_noop() -> None:
     client = X402OpenAI(evm=EVM_KEY)
     client.close()
     assert client._lifecycle._built is None
+
+
+def test_tvm_close_before_build_is_noop_and_does_not_import_tvm(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for name in list(sys.modules):
+        if name == "x402.mechanisms.tvm" or name.startswith("x402.mechanisms.tvm."):
+            monkeypatch.delitem(sys.modules, name, raising=False)
+    client = X402OpenAI(tvm=TVM_KEY)
+    client.close()
+    assert client._lifecycle._built is None
+    assert "x402.mechanisms.tvm" not in sys.modules
+    assert not any(name.startswith("x402.mechanisms.tvm.") for name in sys.modules)
 
 
 def test_request_after_close_raises_and_does_not_rebuild() -> None:
@@ -229,6 +260,8 @@ def test_public_api_does_not_export_removed_names() -> None:
     assert not hasattr(api, "max_amount")
     assert not hasattr(api, "PaymentError")
     assert not hasattr(api, "X402Transport")
+    assert api.TvmConfig is TvmConfig
+    assert api.SvmConfig is SvmConfig
 
 
 def test_async_prebuilt_uses_async_client() -> None:
@@ -236,10 +269,12 @@ def test_async_prebuilt_uses_async_client() -> None:
     assert isinstance(client, AsyncX402OpenAI)
 
 
-def test_removed_names_never_reach_openai() -> None:
-    """tvm must TypeError before OpenAI sees it as a kwarg."""
-    with pytest.raises(TypeError, match="tvm="):
-        X402OpenAI(tvm="x")
+def test_copy_with_tvm_reuses_lifecycle() -> None:
+    client = X402OpenAI(tvm=TVM_KEY)
+    copied = client.copy()
+    assert copied._lifecycle is client._lifecycle
+    assert copied._lifecycle._options.tvm == TVM_KEY
+    assert copied.with_options(timeout=10)._lifecycle is client._lifecycle
 
 
 def test_copy_reuses_lifecycle_and_http_client() -> None:

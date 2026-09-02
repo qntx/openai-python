@@ -9,7 +9,7 @@ from x402.http import x402HTTPClient, x402HTTPClientSync
 from x402.schemas import PaymentRequired, PaymentRequirements, ResourceInfo
 
 from qntx.openai._chains._register import ChainHandles
-from qntx.openai._chains._types import EvmConfig, SvmConfig
+from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 from qntx.openai._payments import (
     PREBUILT_EXCLUSIVE,
     PaymentSourceOptions,
@@ -18,6 +18,7 @@ from qntx.openai._payments import (
 )
 
 EVM_KEY = "0xac0974dac38f24671676c33098b7abf185c4d7b8d04844c06a56a24126c6dcbd"
+TVM_KEY = "11" * 32
 BASE_USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
 
 
@@ -63,7 +64,7 @@ def _noop_register(client: object, options: object) -> ChainHandles:
 
 
 def test_assert_throws_when_no_credentials() -> None:
-    with pytest.raises(ValueError, match=r"'evm', 'svm', or 'x402_client'"):
+    with pytest.raises(ValueError, match=r"'evm', 'svm', 'tvm', or 'x402_client'"):
         assert_payment_options(PaymentSourceOptions())
 
 
@@ -91,6 +92,20 @@ def test_assert_svm_only_ok() -> None:
     assert_payment_options(PaymentSourceOptions(svm="base58"))
 
 
+def test_assert_throws_on_empty_tvm() -> None:
+    with pytest.raises(ValueError, match="non-empty"):
+        assert_payment_options(PaymentSourceOptions(tvm=""))
+
+
+def test_assert_throws_on_empty_tvm_config() -> None:
+    with pytest.raises(ValueError, match="non-empty"):
+        assert_payment_options(PaymentSourceOptions(tvm=TvmConfig(private_key="")))
+
+
+def test_assert_accepts_tvm_without_evm() -> None:
+    assert_payment_options(PaymentSourceOptions(tvm=TVM_KEY))
+
+
 def test_assert_prebuilt_exclusive_keys() -> None:
     with pytest.raises(ValueError, match="Cannot combine"):
         assert_payment_options(PaymentSourceOptions(x402_client=x402ClientSync(), evm=EVM_KEY))
@@ -99,6 +114,11 @@ def test_assert_prebuilt_exclusive_keys() -> None:
 def test_assert_prebuilt_exclusive_svm() -> None:
     with pytest.raises(ValueError, match="Cannot combine"):
         assert_payment_options(PaymentSourceOptions(x402_client=x402ClientSync(), svm="base58"))
+
+
+def test_assert_prebuilt_exclusive_tvm() -> None:
+    with pytest.raises(ValueError, match="Cannot combine"):
+        assert_payment_options(PaymentSourceOptions(x402_client=x402ClientSync(), tvm=TVM_KEY))
 
 
 def test_assert_prebuilt_exclusive_policies() -> None:
@@ -129,7 +149,7 @@ def test_prebuilt_exclusive_message() -> None:
     assert "x402_client" in PREBUILT_EXCLUSIVE
     assert "evm" in PREBUILT_EXCLUSIVE
     assert "svm" in PREBUILT_EXCLUSIVE
-    assert "tvm" not in PREBUILT_EXCLUSIVE
+    assert "tvm" in PREBUILT_EXCLUSIVE
 
 
 def test_build_returns_prebuilt_wrapped() -> None:

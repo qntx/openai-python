@@ -39,9 +39,13 @@ svm = [
     # x402 2.21 ExactSvmScheme imports solana.rpc.api, removed in solana 0.40.
     "solana>=0.36.0,<0.40",
 ]
+tvm = [
+    "x402[tvm]>=2.21.0",
+]
 all = [
     "qntx-openai[evm]",
     "qntx-openai[svm]",
+    "qntx-openai[tvm]",
 ]
 dev = [
     "pytest>=8.0",

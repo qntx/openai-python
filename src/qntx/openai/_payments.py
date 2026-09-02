@@ -12,14 +12,14 @@ from x402.http import x402HTTPClient, x402HTTPClientSync
 from qntx.openai._chains._register import register_chains
 
 if TYPE_CHECKING:
-    from qntx.openai._chains._types import EvmConfig, SvmConfig
+    from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 
 Policy = Callable[[int, list[Any]], list[Any]]
 Selector = Callable[[int, list[Any]], Any]
 
 
 PREBUILT_EXCLUSIVE = (
-    "Cannot combine 'x402_client' with 'evm', 'svm', "
+    "Cannot combine 'x402_client' with 'evm', 'svm', 'tvm', "
     "'policies', 'spend_controls', or 'payment_requirements_selector'. "
     "Configure the pre-built client directly."
 )
@@ -29,6 +29,7 @@ PREBUILT_EXCLUSIVE = (
 class PaymentSourceOptions:
     evm: str | EvmConfig | None = None
     svm: str | SvmConfig | None = None
+    tvm: str | TvmConfig | None = None
     spend_controls: SpendControls | Literal[False] | None = None
     policies: list[Policy] | None = None
     payment_requirements_selector: Selector | None = None
@@ -47,6 +48,7 @@ def assert_payment_options(options: PaymentSourceOptions) -> None:
             for v in (
                 options.evm,
                 options.svm,
+                options.tvm,
                 options.spend_controls,
                 options.policies,
                 options.payment_requirements_selector,
@@ -54,15 +56,19 @@ def assert_payment_options(options: PaymentSourceOptions) -> None:
         ):
             raise ValueError(PREBUILT_EXCLUSIVE)
         return
-    if options.evm is None and options.svm is None:
-        raise ValueError("Provide at least one of 'evm', 'svm', or 'x402_client'.")
+    if options.evm is None and options.svm is None and options.tvm is None:
+        raise ValueError("Provide at least one of 'evm', 'svm', 'tvm', or 'x402_client'.")
     if options.evm is not None:
         _assert_non_empty_private_key("evm", options.evm)
     if options.svm is not None:
         _assert_non_empty_private_key("svm", options.svm)
+    if options.tvm is not None:
+        _assert_non_empty_private_key("tvm", options.tvm)
 
 
-def _assert_non_empty_private_key(field: str, value: str | EvmConfig | SvmConfig) -> None:
+def _assert_non_empty_private_key(
+    field: str, value: str | EvmConfig | SvmConfig | TvmConfig
+) -> None:
     key = value if isinstance(value, str) else value.private_key
     if not key:
         raise ValueError(f"'{field}' private key must be a non-empty string.")

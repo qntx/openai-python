@@ -17,14 +17,14 @@ Public API:
 
 - :class:`X402OpenAI` / :class:`AsyncX402OpenAI` — recommended client classes.
 - :func:`prefer_network` / :func:`prefer_scheme` — payment preference policies.
-- :class:`EvmConfig` / :class:`SvmConfig` / :data:`SpendControls` — constructor config types.
+- :class:`EvmConfig` / :class:`SvmConfig` / :class:`TvmConfig` / :data:`SpendControls`.
 """
 
 from __future__ import annotations
 
 from x402 import SpendControls, x402Client, x402ClientSync
 
-from qntx.openai._chains._types import EvmConfig, SvmConfig
+from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 from qntx.openai._client import AsyncX402OpenAI, X402OpenAI
 from qntx.openai._policies import prefer_network, prefer_scheme
 
@@ -33,6 +33,7 @@ __all__ = [
     "EvmConfig",
     "SpendControls",
     "SvmConfig",
+    "TvmConfig",
     "X402OpenAI",
     "prefer_network",
     "prefer_scheme",
