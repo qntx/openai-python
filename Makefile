@@ -18,7 +18,7 @@ format: ## Run ruff formatter (auto-fix)
 	uv run ruff format .
 
 typecheck: ## Run mypy type checker
-	uv run mypy src/x402_openai
+	uv run mypy src/qntx/openai
 
 test: ## Run pytest
 	uv run pytest

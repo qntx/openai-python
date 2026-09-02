@@ -1,19 +1,15 @@
-"""EVM chat completion with payment policy (prefer Base network).
-
-Demonstrates how to use policies to control which chain is used for payment
-when multiple payment options are available.
+"""EVM chat completion with payment policy (prefer a network).
 
 Usage: EVM_PRIVATE_KEY="0x..." python examples/chat_evm_policy.py
 """
 
 import os
 
-from x402_openai import X402OpenAI, prefer_network
-from x402_openai.wallets import EvmWallet
+from qntx.openai import X402OpenAI, prefer_network
 
 client = X402OpenAI(
-    wallet=EvmWallet(private_key=os.environ["EVM_PRIVATE_KEY"]),
-    policies=[prefer_network("eip155:143")],  # Prefer Monad mainnet
+    evm=os.environ["EVM_PRIVATE_KEY"],
+    policies=[prefer_network("eip155:8453")],
 )
 
 response = client.chat.completions.create(
