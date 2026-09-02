@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qntx.openai._payments import Policy
+    from x402_openai._payments import Policy
 
 
 def prefer_network(network: str) -> Policy:

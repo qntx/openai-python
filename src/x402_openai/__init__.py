@@ -1,8 +1,8 @@
-"""qntx-openai — Drop-in OpenAI client with transparent x402 payment.
+"""x402-openai — Drop-in OpenAI client with transparent x402 payment.
 
 Quick start::
 
-    from qntx.openai import prefer_scheme, X402OpenAI
+    from x402_openai import prefer_scheme, X402OpenAI
 
     client = X402OpenAI(evm="0x…")
 
@@ -24,9 +24,9 @@ from __future__ import annotations
 
 from x402 import SpendControls, x402Client, x402ClientSync
 
-from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
-from qntx.openai._client import AsyncX402OpenAI, X402OpenAI
-from qntx.openai._policies import prefer_network, prefer_scheme
+from x402_openai._chains._types import EvmConfig, SvmConfig, TvmConfig
+from x402_openai._client import AsyncX402OpenAI, X402OpenAI
+from x402_openai._policies import prefer_network, prefer_scheme
 
 __all__ = [
     "AsyncX402OpenAI",

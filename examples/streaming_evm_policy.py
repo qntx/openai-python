@@ -8,7 +8,7 @@ Usage: EVM_PRIVATE_KEY="0x..." python examples/streaming_evm_policy.py
 import asyncio
 import os
 
-from qntx.openai import AsyncX402OpenAI, prefer_network, prefer_scheme
+from x402_openai import AsyncX402OpenAI, prefer_network, prefer_scheme
 
 
 async def main() -> None:

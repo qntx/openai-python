@@ -4,16 +4,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from qntx.openai._chains._evm import register_evm
-from qntx.openai._chains._svm import register_svm
-from qntx.openai._chains._tvm import register_tvm
-from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
+from x402_openai._chains._evm import register_evm
+from x402_openai._chains._svm import register_svm
+from x402_openai._chains._tvm import register_tvm
+from x402_openai._chains._types import EvmConfig, SvmConfig, TvmConfig
 
 if TYPE_CHECKING:
     from x402 import x402Client, x402ClientSync
 
-    from qntx.openai._chains._tvm import _TvmScheme
-    from qntx.openai._payments import PaymentSourceOptions
+    from x402_openai._chains._tvm import _TvmScheme
+    from x402_openai._payments import PaymentSourceOptions
 
 
 class ChainHandles:

@@ -6,10 +6,10 @@ from typing import Any
 
 import pytest
 
-from qntx.openai._chains._register import register_chains
-from qntx.openai._chains._tvm import register_tvm
-from qntx.openai._chains._types import TvmConfig
-from qntx.openai._payments import PaymentSourceOptions, build_x402_client
+from x402_openai._chains._register import register_chains
+from x402_openai._chains._tvm import register_tvm
+from x402_openai._chains._types import TvmConfig
+from x402_openai._payments import PaymentSourceOptions, build_x402_client
 
 TVM_KEY = "11" * 32
 
@@ -194,7 +194,7 @@ def test_invalid_key_is_not_missing_extra() -> None:
     with pytest.raises(ValueError) as exc:
         register_tvm(client, TvmConfig(private_key="00"))  # type: ignore[arg-type]
     assert "not installed" not in str(exc.value)
-    assert "qntx-openai[tvm]" not in str(exc.value)
+    assert "x402-openai[tvm]" not in str(exc.value)
 
 
 def test_dispose_mocks_real_scheme_close(monkeypatch: pytest.MonkeyPatch) -> None:

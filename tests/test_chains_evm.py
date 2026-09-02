@@ -10,10 +10,10 @@ from x402.mechanisms.evm.exact import ExactEvmScheme
 from x402.mechanisms.evm.signers import EthAccountSignerWithRPC
 from x402.mechanisms.evm.upto import UptoEvmScheme
 
-from qntx.openai._chains._evm import register_evm
-from qntx.openai._chains._register import register_chains
-from qntx.openai._chains._types import EvmConfig
-from qntx.openai._payments import PaymentSourceOptions, build_x402_client
+from x402_openai._chains._evm import register_evm
+from x402_openai._chains._register import register_chains
+from x402_openai._chains._types import EvmConfig
+from x402_openai._payments import PaymentSourceOptions, build_x402_client
 
 EVM_KEY = "0xac0974dac38f24671676c33098b7abf185c4d7b8d04844c06a56a24126c6dcbd"
 

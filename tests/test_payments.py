@@ -8,9 +8,9 @@ from x402 import x402Client, x402ClientSync
 from x402.http import x402HTTPClient, x402HTTPClientSync
 from x402.schemas import PaymentRequired, PaymentRequirements, ResourceInfo
 
-from qntx.openai._chains._register import ChainHandles
-from qntx.openai._chains._types import EvmConfig, SvmConfig, TvmConfig
-from qntx.openai._payments import (
+from x402_openai._chains._register import ChainHandles
+from x402_openai._chains._types import EvmConfig, SvmConfig, TvmConfig
+from x402_openai._payments import (
     PREBUILT_EXCLUSIVE,
     PaymentSourceOptions,
     assert_payment_options,
@@ -176,8 +176,8 @@ def test_build_does_not_call_set_spend_controls_when_omitted() -> None:
             return super().set_spend_controls(controls)  # type: ignore[misc]
 
     with (
-        patch("qntx.openai._payments.x402ClientSync", _Client),
-        patch("qntx.openai._payments.register_chains", _noop_register),
+        patch("x402_openai._payments.x402ClientSync", _Client),
+        patch("x402_openai._payments.register_chains", _noop_register),
     ):
         build_x402_client(PaymentSourceOptions(evm=EVM_KEY), sync=True)
     assert calls == []
@@ -192,8 +192,8 @@ def test_build_set_spend_controls_false() -> None:
             return super().set_spend_controls(controls)  # type: ignore[misc]
 
     with (
-        patch("qntx.openai._payments.x402ClientSync", _Client),
-        patch("qntx.openai._payments.register_chains", _noop_register),
+        patch("x402_openai._payments.x402ClientSync", _Client),
+        patch("x402_openai._payments.register_chains", _noop_register),
     ):
         build_x402_client(PaymentSourceOptions(evm=EVM_KEY, spend_controls=False), sync=True)
     assert calls == [False]
@@ -205,7 +205,7 @@ def _core(built: object) -> x402ClientSync:
 
 
 def test_spend_controls_omitted_rejects_2_usdc() -> None:
-    with patch("qntx.openai._payments.register_chains", _noop_register):
+    with patch("x402_openai._payments.register_chains", _noop_register):
         built = build_x402_client(PaymentSourceOptions(evm=EVM_KEY), sync=True)
     core = _core(built)
     core.register("eip155:8453", StubUsdcScheme("exact"))
@@ -214,7 +214,7 @@ def test_spend_controls_omitted_rejects_2_usdc() -> None:
 
 
 def test_spend_controls_explicit_1_rejects_2_usdc() -> None:
-    with patch("qntx.openai._payments.register_chains", _noop_register):
+    with patch("x402_openai._payments.register_chains", _noop_register):
         built = build_x402_client(
             PaymentSourceOptions(evm=EVM_KEY, spend_controls={"max_amount_per_payment": "$1"}),
             sync=True,
@@ -226,7 +226,7 @@ def test_spend_controls_explicit_1_rejects_2_usdc() -> None:
 
 
 def test_spend_controls_5_allows_2_usdc() -> None:
-    with patch("qntx.openai._payments.register_chains", _noop_register):
+    with patch("x402_openai._payments.register_chains", _noop_register):
         built = build_x402_client(
             PaymentSourceOptions(evm=EVM_KEY, spend_controls={"max_amount_per_payment": "$5"}),
             sync=True,
@@ -238,7 +238,7 @@ def test_spend_controls_5_allows_2_usdc() -> None:
 
 
 def test_spend_controls_false_allows_2_usdc() -> None:
-    with patch("qntx.openai._payments.register_chains", _noop_register):
+    with patch("x402_openai._payments.register_chains", _noop_register):
         built = build_x402_client(
             PaymentSourceOptions(evm=EVM_KEY, spend_controls=False), sync=True
         )
@@ -249,10 +249,10 @@ def test_spend_controls_false_allows_2_usdc() -> None:
 
 
 def test_build_registers_policies() -> None:
-    from qntx.openai import prefer_scheme
+    from x402_openai import prefer_scheme
 
     policy = prefer_scheme("upto")
-    with patch("qntx.openai._payments.register_chains", _noop_register):
+    with patch("x402_openai._payments.register_chains", _noop_register):
         built = build_x402_client(
             PaymentSourceOptions(evm=EVM_KEY, policies=[policy]),
             sync=True,
@@ -262,7 +262,7 @@ def test_build_registers_policies() -> None:
 
 
 def test_selector_runs_after_spend_controls() -> None:
-    with patch("qntx.openai._payments.register_chains", _noop_register):
+    with patch("x402_openai._payments.register_chains", _noop_register):
         built = build_x402_client(
             PaymentSourceOptions(
                 evm=EVM_KEY,

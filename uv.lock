@@ -1751,64 +1751,6 @@ wheels = [
 ]
 
 [[package]]
-name = "qntx-openai"
-version = "1.0.0"
-source = { editable = "." }
-dependencies = [
-    { name = "httpx2" },
-    { name = "openai" },
-    { name = "x402" },
-]
-
-[package.optional-dependencies]
-all = [
-    { name = "eth-account" },
-    { name = "solana" },
-    { name = "x402", extra = ["evm", "svm", "tvm"] },
-]
-dev = [
-    { name = "build" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-]
-evm = [
-    { name = "eth-account" },
-    { name = "x402", extra = ["evm"] },
-]
-svm = [
-    { name = "solana" },
-    { name = "x402", extra = ["svm"] },
-]
-tvm = [
-    { name = "x402", extra = ["tvm"] },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0" },
-    { name = "eth-account", marker = "extra == 'evm'", specifier = ">=0.13.0" },
-    { name = "httpx2", specifier = ">=2.12.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0" },
-    { name = "openai", specifier = ">=3.7.0" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
-    { name = "qntx-openai", extras = ["evm"], marker = "extra == 'all'" },
-    { name = "qntx-openai", extras = ["svm"], marker = "extra == 'all'" },
-    { name = "qntx-openai", extras = ["tvm"], marker = "extra == 'all'" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
-    { name = "solana", marker = "extra == 'svm'", specifier = ">=0.36.0,<0.40" },
-    { name = "x402", specifier = ">=2.21.0" },
-    { name = "x402", extras = ["evm"], marker = "extra == 'evm'", specifier = ">=2.21.0" },
-    { name = "x402", extras = ["svm"], marker = "extra == 'svm'", specifier = ">=2.21.0" },
-    { name = "x402", extras = ["tvm"], marker = "extra == 'tvm'", specifier = ">=2.21.0" },
-]
-provides-extras = ["evm", "svm", "tvm", "all", "dev"]
-
-[[package]]
 name = "regex"
 version = "2026.1.15"
 source = { registry = "https://pypi.org/simple" }
@@ -2273,6 +2215,64 @@ tvm = [
     { name = "pytoniq" },
     { name = "pytoniq-core" },
 ]
+
+[[package]]
+name = "x402-openai"
+version = "1.0.0"
+source = { editable = "." }
+dependencies = [
+    { name = "httpx2" },
+    { name = "openai" },
+    { name = "x402" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "eth-account" },
+    { name = "solana" },
+    { name = "x402", extra = ["evm", "svm", "tvm"] },
+]
+dev = [
+    { name = "build" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+]
+evm = [
+    { name = "eth-account" },
+    { name = "x402", extra = ["evm"] },
+]
+svm = [
+    { name = "solana" },
+    { name = "x402", extra = ["svm"] },
+]
+tvm = [
+    { name = "x402", extra = ["tvm"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "build", marker = "extra == 'dev'", specifier = ">=1.0" },
+    { name = "eth-account", marker = "extra == 'evm'", specifier = ">=0.13.0" },
+    { name = "httpx2", specifier = ">=2.12.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0" },
+    { name = "openai", specifier = ">=3.7.0" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+    { name = "solana", marker = "extra == 'svm'", specifier = ">=0.36.0,<0.40" },
+    { name = "x402", specifier = ">=2.21.0" },
+    { name = "x402", extras = ["evm"], marker = "extra == 'evm'", specifier = ">=2.21.0" },
+    { name = "x402", extras = ["svm"], marker = "extra == 'svm'", specifier = ">=2.21.0" },
+    { name = "x402", extras = ["tvm"], marker = "extra == 'tvm'", specifier = ">=2.21.0" },
+    { name = "x402-openai", extras = ["evm"], marker = "extra == 'all'" },
+    { name = "x402-openai", extras = ["svm"], marker = "extra == 'all'" },
+    { name = "x402-openai", extras = ["tvm"], marker = "extra == 'all'" },
+]
+provides-extras = ["evm", "svm", "tvm", "all", "dev"]
 
 [[package]]
 name = "yarl"

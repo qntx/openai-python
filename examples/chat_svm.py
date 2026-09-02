@@ -5,7 +5,7 @@ Usage: SOLANA_PRIVATE_KEY="base58..." python examples/chat_svm.py
 
 import os
 
-from qntx.openai import X402OpenAI
+from x402_openai import X402OpenAI
 
 client = X402OpenAI(svm=os.environ["SOLANA_PRIVATE_KEY"])
 
