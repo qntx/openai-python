@@ -196,24 +196,6 @@ All standard OpenAI options (`base_url`, `timeout`, `max_retries`, …) are forw
 | `svm` | Solana | `x402-openai[svm]` |
 | `tvm` | TVM | `x402-openai[tvm]` |
 
-## Examples
-
-See the [`examples/`](examples/) directory. Each script is self-contained:
-
-```bash
-EVM_PRIVATE_KEY="0x…"           python examples/chat_evm.py
-SOLANA_PRIVATE_KEY="base58…"    python examples/chat_svm.py
-TVM_PRIVATE_KEY="hex-or-base64…" python examples/chat_tvm.py
-EVM_PRIVATE_KEY="0x…"           python examples/streaming_evm.py
-SOLANA_PRIVATE_KEY="base58…"    python examples/streaming_svm.py
-EVM_PRIVATE_KEY="0x…"           python examples/streaming_evm_policy.py
-EVM_PRIVATE_KEY="0x…"           python examples/chat_upto.py
-EVM_PRIVATE_KEY="0x…"           python examples/chat_policy.py
-EVM_PRIVATE_KEY="0x…"           python examples/chat_evm_policy.py
-EVM_PRIVATE_KEY="0x…"           python examples/models.py
-EVM_PRIVATE_KEY="0x…" SOLANA_PRIVATE_KEY="base58…" python examples/chat_multichain_policy.py
-```
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
