@@ -6,14 +6,11 @@ Usage: SOLANA_PRIVATE_KEY="base58..." python examples/streaming_svm.py
 import asyncio
 import os
 
-from x402_openai import AsyncX402OpenAI
-from x402_openai.wallets import SvmWallet
+from qntx.openai import AsyncX402OpenAI
 
 
 async def main() -> None:
-    client = AsyncX402OpenAI(
-        wallet=SvmWallet(private_key=os.environ["SOLANA_PRIVATE_KEY"]),
-    )
+    client = AsyncX402OpenAI(svm=os.environ["SOLANA_PRIVATE_KEY"])
 
     stream = await client.chat.completions.create(
         model=os.environ.get("MODEL", "openai/gpt-4o-mini"),

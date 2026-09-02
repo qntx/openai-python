@@ -24,10 +24,10 @@ repos:
     rev: v2.3.1
     hooks:
       - id: mypy
-        additional_dependencies: ["openai>=1.0.0", "httpx>=0.27.0"]
+        additional_dependencies: ["openai>=3.7.0", "httpx2>=2.12.0", "x402>=2.21.0"]
         args: [--strict, --config-file=pyproject.toml]
         pass_filenames: false
-        entry: mypy src/x402_openai
+        entry: mypy src/qntx/openai
 
 ci:
   autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks

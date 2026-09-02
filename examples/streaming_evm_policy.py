@@ -1,4 +1,6 @@
-"""EVM async streaming chat completion with private key and payment policy.
+"""EVM async streaming chat completion with payment policies.
+
+Prefers Base mainnet, then the `upto` scheme.
 
 Usage: EVM_PRIVATE_KEY="0x..." python examples/streaming_evm_policy.py
 """
@@ -6,14 +8,16 @@ Usage: EVM_PRIVATE_KEY="0x..." python examples/streaming_evm_policy.py
 import asyncio
 import os
 
-from x402_openai import AsyncX402OpenAI, prefer_network
-from x402_openai.wallets import EvmWallet
+from qntx.openai import AsyncX402OpenAI, prefer_network, prefer_scheme
 
 
 async def main() -> None:
     client = AsyncX402OpenAI(
-        wallet=EvmWallet(private_key=os.environ["EVM_PRIVATE_KEY"]),
-        policies=[prefer_network("eip155:143")],
+        evm=os.environ["EVM_PRIVATE_KEY"],
+        policies=[
+            prefer_network("eip155:8453"),  # Prefer Base mainnet
+            prefer_scheme("upto"),
+        ],
     )
 
     stream = await client.chat.completions.create(

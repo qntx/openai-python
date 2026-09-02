@@ -6,14 +6,11 @@ Usage: EVM_PRIVATE_KEY="0x..." python examples/streaming_evm.py
 import asyncio
 import os
 
-from x402_openai import AsyncX402OpenAI
-from x402_openai.wallets import EvmWallet
+from qntx.openai import AsyncX402OpenAI
 
 
 async def main() -> None:
-    client = AsyncX402OpenAI(
-        wallet=EvmWallet(private_key=os.environ["EVM_PRIVATE_KEY"]),
-    )
+    client = AsyncX402OpenAI(evm=os.environ["EVM_PRIVATE_KEY"])
 
     stream = await client.chat.completions.create(
         model=os.environ.get("MODEL", "openai/gpt-4o-mini"),

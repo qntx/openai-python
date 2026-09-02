@@ -3,21 +3,20 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "x402-openai"
-version = "0.3.0"
+name = "qntx-openai"
+version = "1.0.0"
 description = "Drop-in OpenAI Python client with transparent x402 payment support."
 readme = "README.md"
 license = "MIT"
 authors = [
     { name = "QNTX", email = "x@qntx.fun" },
 ]
-requires-python = ">=3.11"
-keywords = ["openai", "x402", "payment", "crypto", "usdc", "llm", "ai", "wallet"]
+requires-python = ">=3.12"
+keywords = ["openai", "x402", "payment", "crypto", "usdc", "llm", "ai"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -25,22 +24,28 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "openai>=1.0.0",
-    "httpx>=0.27.0",
+    "openai>=3.7.0",
+    "httpx2>=2.12.0",
+    "x402>=2.21.0",
 ]
 
 [project.optional-dependencies]
 evm = [
-    "x402[evm]>=2.0.0",
+    "x402[evm]>=2.21.0",
     "eth-account>=0.13.0",
 ]
 svm = [
-    "x402[svm]>=2.0.0",
-    "solders>=0.21.0",
+    "x402[svm]>=2.21.0",
+    # x402 2.21 ExactSvmScheme imports solana.rpc.api, removed in solana 0.40.
+    "solana>=0.36.0,<0.40",
+]
+tvm = [
+    "x402[tvm]>=2.21.0",
 ]
 all = [
-    "x402-openai[evm]",
-    "x402-openai[svm]",
+    "qntx-openai[evm]",
+    "qntx-openai[svm]",
+    "qntx-openai[tvm]",
 ]
 dev = [
     "pytest>=8.0",
@@ -52,15 +57,15 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/qntx/x402-openai-python"
-Repository = "https://github.com/qntx/x402-openai-python"
-Issues = "https://github.com/qntx/x402-openai-python/issues"
+Homepage = "https://github.com/qntx/openai-python"
+Repository = "https://github.com/qntx/openai-python"
+Issues = "https://github.com/qntx/openai-python/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/x402_openai"]
+packages = ["src/qntx"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 99
 
 [tool.ruff.lint]
@@ -82,22 +87,21 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["x402_openai"]
+known-first-party = ["qntx"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
 
 [[tool.mypy.overrides]]
 module = [
     "eth_account",
     "eth_account.*",
-    "solders",
-    "solders.*",
-    "x402",
-    "x402.*",
 ]
 ignore_missing_imports = true
 

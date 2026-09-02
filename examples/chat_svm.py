@@ -5,10 +5,9 @@ Usage: SOLANA_PRIVATE_KEY="base58..." python examples/chat_svm.py
 
 import os
 
-from x402_openai import X402OpenAI
-from x402_openai.wallets import SvmWallet
+from qntx.openai import X402OpenAI
 
-client = X402OpenAI(wallet=SvmWallet(private_key=os.environ["SOLANA_PRIVATE_KEY"]))
+client = X402OpenAI(svm=os.environ["SOLANA_PRIVATE_KEY"])
 
 response = client.chat.completions.create(
     model=os.environ.get("MODEL", "openai/gpt-4o-mini"),
