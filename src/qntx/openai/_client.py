@@ -22,11 +22,11 @@ from qntx.openai._transport import X402Httpx2AsyncTransport, X402Httpx2SyncTrans
 if TYPE_CHECKING:
     from x402 import SpendControls, x402Client, x402ClientSync
 
-    from qntx.openai._chains._types import EvmConfig
+    from qntx.openai._chains._types import EvmConfig, SvmConfig
 
 DEFAULT_BASE_URL = "https://llm.qntx.org/v1"
 _REMOVED = ("wallet", "wallets", "mnemonic", "max_amount", "http_client")
-_NOT_YET = {"svm": "svm= lands in 1.0 PR 2", "tvm": "tvm= lands in 1.0 PR 3"}
+_NOT_YET = {"tvm": "tvm= lands in 1.0 PR 3"}
 _HTTP_CLIENT_REMOVED = (
     "'http_client' was removed. Pass per-chain private keys (evm=) and spend_controls=."
 )
@@ -160,14 +160,15 @@ def _copy_with_lifecycle(self: Any, kwargs: dict[str, Any]) -> dict[str, Any]:
 class X402OpenAI(openai.OpenAI):
     """Synchronous OpenAI client with transparent x402 payment.
 
-    Provide at least one of ``evm`` or ``x402_client``. Default ``base_url`` is
-    ``https://llm.qntx.org/v1``.
+    Provide at least one of ``evm``, ``svm``, or ``x402_client``. Default
+    ``base_url`` is ``https://llm.qntx.org/v1``.
     """
 
     def __init__(
         self,
         *,
         evm: str | EvmConfig | None = None,
+        svm: str | SvmConfig | None = None,
         spend_controls: SpendControls | Literal[False] | None = None,
         policies: list[Policy] | None = None,
         payment_requirements_selector: Selector | None = None,
@@ -191,6 +192,7 @@ class X402OpenAI(openai.OpenAI):
         _reject_removed_and_not_yet(kwargs)
         payment = PaymentSourceOptions(
             evm=evm,
+            svm=svm,
             spend_controls=spend_controls,
             policies=policies,
             payment_requirements_selector=payment_requirements_selector,
@@ -226,6 +228,7 @@ class AsyncX402OpenAI(openai.AsyncOpenAI):
         self,
         *,
         evm: str | EvmConfig | None = None,
+        svm: str | SvmConfig | None = None,
         spend_controls: SpendControls | Literal[False] | None = None,
         policies: list[Policy] | None = None,
         payment_requirements_selector: Selector | None = None,
@@ -249,6 +252,7 @@ class AsyncX402OpenAI(openai.AsyncOpenAI):
         _reject_removed_and_not_yet(kwargs)
         payment = PaymentSourceOptions(
             evm=evm,
+            svm=svm,
             spend_controls=spend_controls,
             policies=policies,
             payment_requirements_selector=payment_requirements_selector,

@@ -9,7 +9,7 @@ from x402.http import x402HTTPClient, x402HTTPClientSync
 from x402.schemas import PaymentRequired, PaymentRequirements, ResourceInfo
 
 from qntx.openai._chains._register import ChainHandles
-from qntx.openai._chains._types import EvmConfig
+from qntx.openai._chains._types import EvmConfig, SvmConfig
 from qntx.openai._payments import (
     PREBUILT_EXCLUSIVE,
     PaymentSourceOptions,
@@ -63,7 +63,7 @@ def _noop_register(client: object, options: object) -> ChainHandles:
 
 
 def test_assert_throws_when_no_credentials() -> None:
-    with pytest.raises(ValueError, match="at least one"):
+    with pytest.raises(ValueError, match=r"'evm', 'svm', or 'x402_client'"):
         assert_payment_options(PaymentSourceOptions())
 
 
@@ -77,9 +77,28 @@ def test_assert_throws_on_empty_evm_config() -> None:
         assert_payment_options(PaymentSourceOptions(evm=EvmConfig(private_key="")))
 
 
+def test_assert_throws_on_empty_svm() -> None:
+    with pytest.raises(ValueError, match="'svm' private key must be a non-empty string"):
+        assert_payment_options(PaymentSourceOptions(svm=""))
+
+
+def test_assert_throws_on_empty_svm_config() -> None:
+    with pytest.raises(ValueError, match="'svm' private key must be a non-empty string"):
+        assert_payment_options(PaymentSourceOptions(svm=SvmConfig(private_key="")))
+
+
+def test_assert_svm_only_ok() -> None:
+    assert_payment_options(PaymentSourceOptions(svm="base58"))
+
+
 def test_assert_prebuilt_exclusive_keys() -> None:
     with pytest.raises(ValueError, match="Cannot combine"):
         assert_payment_options(PaymentSourceOptions(x402_client=x402ClientSync(), evm=EVM_KEY))
+
+
+def test_assert_prebuilt_exclusive_svm() -> None:
+    with pytest.raises(ValueError, match="Cannot combine"):
+        assert_payment_options(PaymentSourceOptions(x402_client=x402ClientSync(), svm="base58"))
 
 
 def test_assert_prebuilt_exclusive_policies() -> None:
@@ -109,8 +128,8 @@ def test_assert_prebuilt_exclusive_selector() -> None:
 def test_prebuilt_exclusive_message() -> None:
     assert "x402_client" in PREBUILT_EXCLUSIVE
     assert "evm" in PREBUILT_EXCLUSIVE
+    assert "svm" in PREBUILT_EXCLUSIVE
     assert "tvm" not in PREBUILT_EXCLUSIVE
-    assert "svm" not in PREBUILT_EXCLUSIVE
 
 
 def test_build_returns_prebuilt_wrapped() -> None:

@@ -11,3 +11,11 @@ class EvmConfig:
 
     private_key: str
     rpc_url: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class SvmConfig:
+    """SVM base58 64-byte secret. ``rpc_url`` overrides the default Solana JSON-RPC."""
+
+    private_key: str
+    rpc_url: str | None = None

@@ -33,7 +33,7 @@ def test_is_openai_subclass() -> None:
 
 
 def test_throws_when_no_credentials() -> None:
-    with pytest.raises(ValueError, match="at least one"):
+    with pytest.raises(ValueError, match=r"'evm', 'svm', or 'x402_client'"):
         X402OpenAI()
 
 
@@ -49,6 +49,18 @@ def test_throws_on_empty_evm_config() -> None:
         X402OpenAI(evm=EvmConfig(private_key=""))
 
 
+def test_throws_on_empty_svm_string() -> None:
+    with pytest.raises(ValueError, match="'svm' private key must be a non-empty string"):
+        X402OpenAI(svm="")
+
+
+def test_throws_on_empty_svm_config() -> None:
+    from qntx.openai import SvmConfig
+
+    with pytest.raises(ValueError, match="'svm' private key must be a non-empty string"):
+        X402OpenAI(svm=SvmConfig(private_key=""))
+
+
 def test_throws_on_removed_names() -> None:
     for name in ("wallet", "wallets", "mnemonic", "max_amount", "http_client"):
         with pytest.raises(TypeError, match="was removed"):
@@ -60,9 +72,19 @@ def test_http_client_typeerror() -> None:
         X402OpenAI(evm="0x1", http_client=object())
 
 
-def test_svm_not_yet() -> None:
-    with pytest.raises(TypeError, match="svm="):
-        X402OpenAI(evm="0x1", svm="base58")
+def test_accepts_svm_without_evm() -> None:
+    client = X402OpenAI(svm="base58")
+    assert isinstance(client, X402OpenAI)
+
+
+def test_async_accepts_svm_without_evm() -> None:
+    client = AsyncX402OpenAI(svm="base58")
+    assert isinstance(client, AsyncX402OpenAI)
+
+
+def test_accepts_evm_and_svm() -> None:
+    client = X402OpenAI(evm="0x1", svm="base58")
+    assert isinstance(client, X402OpenAI)
 
 
 def test_tvm_not_yet() -> None:
@@ -73,6 +95,11 @@ def test_tvm_not_yet() -> None:
 def test_prebuilt_exclusive_with_evm() -> None:
     with pytest.raises(ValueError, match="Cannot combine"):
         X402OpenAI(x402_client=x402ClientSync(), evm="0x1")
+
+
+def test_prebuilt_exclusive_with_svm() -> None:
+    with pytest.raises(ValueError, match="Cannot combine"):
+        X402OpenAI(x402_client=x402ClientSync(), svm="base58")
 
 
 def test_prebuilt_exclusive_with_policies() -> None:
@@ -210,9 +237,7 @@ def test_async_prebuilt_uses_async_client() -> None:
 
 
 def test_removed_names_never_reach_openai() -> None:
-    """svm/tvm must TypeError before OpenAI sees them as kwargs."""
-    with pytest.raises(TypeError, match="svm="):
-        X402OpenAI(svm="x")
+    """tvm must TypeError before OpenAI sees it as a kwarg."""
     with pytest.raises(TypeError, match="tvm="):
         X402OpenAI(tvm="x")
 
@@ -223,6 +248,14 @@ def test_copy_reuses_lifecycle_and_http_client() -> None:
     assert copied is not client
     assert copied._lifecycle is client._lifecycle
     assert copied._client is client._client
+
+
+def test_copy_with_svm_reuses_lifecycle() -> None:
+    client = X402OpenAI(svm="base58")
+    copied = client.copy()
+    assert copied._lifecycle is client._lifecycle
+    assert copied._lifecycle._options.svm == "base58"
+    assert copied.with_options(timeout=10)._lifecycle is client._lifecycle
 
 
 def test_with_options_timeout_reuses_lifecycle() -> None:
@@ -248,6 +281,13 @@ def test_async_copy_reuses_lifecycle() -> None:
     copied = client.copy()
     assert copied._lifecycle is client._lifecycle
     assert copied.with_options(timeout=5)._lifecycle is client._lifecycle
+
+
+def test_async_copy_with_svm_reuses_lifecycle() -> None:
+    client = AsyncX402OpenAI(svm="base58")
+    copied = client.copy()
+    assert copied._lifecycle is client._lifecycle
+    assert copied._lifecycle._options.svm == "base58"
 
 
 async def test_async_close_during_first_request_observes_closed() -> None:

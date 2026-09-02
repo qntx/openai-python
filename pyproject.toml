@@ -34,8 +34,14 @@ evm = [
     "x402[evm]>=2.21.0",
     "eth-account>=0.13.0",
 ]
+svm = [
+    "x402[svm]>=2.21.0",
+    # x402 2.21 ExactSvmScheme imports solana.rpc.api, removed in solana 0.40.
+    "solana>=0.36.0,<0.40",
+]
 all = [
     "qntx-openai[evm]",
+    "qntx-openai[svm]",
 ]
 dev = [
     "pytest>=8.0",
