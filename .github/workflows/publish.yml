@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: Publish
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   attestations: write
 
 jobs:
-  call-publish:
+  publish:
     uses: qntx/workflows/.github/workflows/publish-pypi.yml@v2
     permissions:
       contents: read
