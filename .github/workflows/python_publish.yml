@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   call-publish:
-    uses: qntx/workflows/.github/workflows/publish-pypi.yml@v2.0.0
+    uses: qntx/workflows/.github/workflows/publish-pypi.yml@v2
     permissions:
       contents: read
       id-token: write
