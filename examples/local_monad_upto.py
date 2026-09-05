@@ -31,11 +31,7 @@ os.environ.setdefault("no_proxy", os.environ["NO_PROXY"])
 from x402_openai import EvmConfig, X402OpenAI, prefer_network, prefer_scheme
 
 network = os.environ.get("NETWORK", "eip155:143")
-rpc_url = (
-    "https://testnet-rpc.monad.xyz"
-    if network == "eip155:10143"
-    else "https://rpc.monad.xyz"
-)
+rpc_url = "https://testnet-rpc.monad.xyz" if network == "eip155:10143" else "https://rpc.monad.xyz"
 client = X402OpenAI(
     evm=EvmConfig(private_key=os.environ["EVM_PRIVATE_KEY"], rpc_url=rpc_url),
     base_url=os.environ.get("O402_BASE_URL", "http://127.0.0.1:8080/v1"),

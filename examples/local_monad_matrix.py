@@ -35,9 +35,7 @@ networks = ("eip155:143", "eip155:10143")
 
 def rpc_url(network: str) -> str:
     return (
-        "https://testnet-rpc.monad.xyz"
-        if network == "eip155:10143"
-        else "https://rpc.monad.xyz"
+        "https://testnet-rpc.monad.xyz" if network == "eip155:10143" else "https://rpc.monad.xyz"
     )
 
 
@@ -72,7 +70,7 @@ for network in networks:
             stream=False,
         )
         print("upto ok", {"network": network, "content": chat.choices[0].message.content})
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         print("upto fail", network, type(exc).__name__, exc)
 
     try:
@@ -84,5 +82,5 @@ for network in networks:
         )
         url = None if not image.data else image.data[0].url
         print("exact ok", {"network": network, "url": url})
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         print("exact fail", network, type(exc).__name__, exc)
