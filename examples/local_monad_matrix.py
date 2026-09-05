@@ -8,6 +8,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from x402_openai import EvmConfig, X402OpenAI, prefer_network, prefer_scheme
+
 
 def _load_dotenv() -> None:
     path = Path(__file__).resolve().parents[1] / ".env"
@@ -24,8 +26,6 @@ def _load_dotenv() -> None:
 _load_dotenv()
 os.environ.setdefault("NO_PROXY", "127.0.0.1,localhost,::1")
 os.environ.setdefault("no_proxy", os.environ["NO_PROXY"])
-
-from x402_openai import EvmConfig, X402OpenAI, prefer_network, prefer_scheme
 
 key = os.environ["EVM_PRIVATE_KEY"]
 base_url = os.environ.get("O402_BASE_URL", "http://127.0.0.1:8080/v1")

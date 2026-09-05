@@ -14,6 +14,8 @@ import json
 import os
 from pathlib import Path
 
+from x402_openai import EvmConfig, X402OpenAI, prefer_network, prefer_scheme
+
 
 def _load_dotenv() -> None:
     path = Path(__file__).resolve().parents[1] / ".env"
@@ -30,8 +32,6 @@ def _load_dotenv() -> None:
 _load_dotenv()
 os.environ.setdefault("NO_PROXY", "127.0.0.1,localhost,::1")
 os.environ.setdefault("no_proxy", os.environ["NO_PROXY"])
-
-from x402_openai import EvmConfig, X402OpenAI, prefer_network, prefer_scheme
 
 network = os.environ.get("NETWORK", "eip155:143")
 rpc_url = "https://testnet-rpc.monad.xyz" if network == "eip155:10143" else "https://rpc.monad.xyz"
