@@ -154,8 +154,8 @@ If nothing matches, all remaining options pass through. If any `upto` requiremen
 ### Closing
 
 ```python
-client.close()          # X402OpenAI
-await client.aclose()   # AsyncX402OpenAI
+client.close()  # X402OpenAI
+await client.aclose()  # AsyncX402OpenAI
 ```
 
 `close()` / `aclose()` dispose TVM `ExactTvmScheme` HTTP clients. Close before the first request is a no-op. A request after close raises `X402OpenAI is closed` and does not rebuild.
