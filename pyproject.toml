@@ -37,7 +37,7 @@ evm = [
 svm = [
     "x402[svm]>=2.21.0",
     # x402 2.21 ExactSvmScheme imports solana.rpc.api, removed in solana 0.40.
-    "solana>=0.36.0,<0.40",
+    "solana>=0.36.0,<0.41",
 ]
 tvm = [
     "x402[tvm]>=2.21.0",
