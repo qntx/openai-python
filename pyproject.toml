@@ -9,7 +9,7 @@ description = "Drop-in OpenAI Python client with transparent x402 payment suppor
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "QNTX", email = "x@qntx.fun" },
+    { name = "QNTX", email = "x@qntx.org" },
 ]
 requires-python = ">=3.12"
 keywords = ["openai", "x402", "payment", "crypto", "usdc", "llm", "ai"]
